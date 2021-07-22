@@ -116,3 +116,15 @@ target/
 
 *.orig
 *.patch
+client/android_sources/python-for-android
+client/sources-linux/compat/bits/lunacy-docs/
+client/sources-linux/compat/bits/vscode-docs/
+pupy/external/BeRoot
+pupy/external/LaZagne
+pupy/external/linux-exploit-suggester
+pupy/external/mimipy
+pupy/external/Windows-Exploit-Suggester/
+pupy/external/winpty
+pupy/external/WinPwnage
+pupy/modules/rdesktop.py
+pupy/packages/linux/all/linux_stealth.py
