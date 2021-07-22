@@ -37,6 +37,8 @@ from win32evtlog import (
     EVENTLOG_BACKWARDS_READ, EVENTLOG_SEQUENTIAL_READ
 )
 
+from datetime import datetime
+
 LANGID = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL)
 BLACKLIST = (
     'Application Error'
@@ -140,9 +142,11 @@ class EventLog(object):
 
         return events_count
 
-    def get_events(self, logtype, server='', filter_event_id=None):
-        if filter_event_id is not None:
-            filter_event_id = int(filter_event_id)
+    def get_events(self, logtype, server=''):
+
+        UTC_OFFSET_TIMEDELTA = (
+            datetime.now() - datetime.utcnow()
+        ).total_seconds()
 
         log = OpenEventLog(server, logtype)
         if not log:
@@ -173,11 +177,6 @@ class EventLog(object):
                     break
 
                 for ev_obj in events:
-                    event_id = int(winerror.HRESULT_CODE(ev_obj.EventID))
-
-                    if filter_event_id is not None and event_id != filter_event_id:
-                        continue
-
                     if not ev_obj.StringInserts:
                         continue
 
@@ -260,7 +259,8 @@ class EventLog(object):
                         continue
 
                     yield {
-                        'EventID': event_id,
+                        'id': int(winerror.HRESULT_CODE(ev_obj.EventID)) + UTC_OFFSET_TIMEDELTA,
+                        'EventID': int(winerror.HRESULT_CODE(ev_obj.EventID)),
                         'record': ev_obj.RecordNumber,
                         'date': int(ev_obj.TimeGenerated),
                         'computer': ev_obj.ComputerName,
@@ -281,7 +281,7 @@ class EventLog(object):
 
             CloseEventLog(log)
 
-    def get_last_events(self, count=10, includes=[], excludes=[], eventid=None):
+    def get_last_events(self, count=10, includes=[], excludes=[]):
         events = {}
 
         includes = [
@@ -295,7 +295,7 @@ class EventLog(object):
         for log in self.sources:
             amount = 0
 
-            for event in self.get_events(log, filter_event_id=eventid):
+            for event in self.get_events(log):
                 source = event.pop('source')
 
                 if source not in events:
@@ -339,5 +339,5 @@ class EventLog(object):
 
         return events
 
-def get_last_events(count=10, includes=[], excludes=[], eventid=None):
-    return EventLog().get_last_events(count, includes, excludes, eventid)
+def get_last_events(count=10, includes=[], excludes=[]):
+    return EventLog().get_last_events(count, includes, excludes)

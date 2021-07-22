@@ -28,8 +28,6 @@ class Logs(PupyModule):
                         help='Show time')
         cls.arg_parser.add_argument('-w', '--width', action='store_true', default=False,
                         help='Show full content')
-        cls.arg_parser.add_argument(
-            '-I', '--event-id', help='Filter by event id (if applicable')
 
 
     def run(self, args):
@@ -42,17 +40,16 @@ class Logs(PupyModule):
                 date = datetime.fromtimestamp(item['date'])
                 date_str = ''
                 if date.date() == today:
-                    date_str = Color(date.strftime('%H:%M:%S'), 'cyan')
+                    date_str = date.strftime('%H:%M:%S')
                 elif date.date().year == today.year:
-                    date_str = Color(date.strftime('%d/%m %H:%M:%S'), 'grey')
+                    date_str = date.strftime('%d/%m %H:%M:%S')
                 else:
-                    date_str = Color(
-                        date.strftime('%Y/%d/%m %H:%M:%S'), 'lightgrey')
+                    date_str = date.strftime('%Y/%d/%m %H:%M:%S')
 
-                items.append(date_str)
+                items.append(Color(date_str, 'lightgrey'))
 
             if 'EventID' in item:
-                items.append(Color(item['EventID'], 'green'))
+                items.append(Color('EventID: ' + str(item['EventID']), 'green'))
 
             msg = item['msg']
 
@@ -69,9 +66,7 @@ class Logs(PupyModule):
             items.append(msg)
             return Line(*items)
 
-        for category, events in get_last_events(
-                    args.number, args.include, args.exclude, args.event_id
-                ).iteritems():
+        for category, events in get_last_events(args.number, args.include, args.exclude).iteritems():
             if not events:
                 continue
 

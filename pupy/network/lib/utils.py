@@ -58,9 +58,6 @@ def parse_host(host, default_port=443):
         host, port = host.rsplit(':', 1)
         port = int(port)
 
-    if host.startswith('[') and host.endswith(']'):
-        host = host[1:-1]
-
     return HostInfo(host, port)
 
 

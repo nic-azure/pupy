@@ -8,7 +8,6 @@ __all__ = [
 import _winreg
 import re
 import sys
-import struct
 
 WELL_KNOWN_KEYS = {
     'HKEY_LOCAL_MACHINE': _winreg.HKEY_LOCAL_MACHINE,
@@ -30,9 +29,6 @@ WELL_KNOWN_TYPES = {
     str: _winreg.REG_SZ,
     unicode: _winreg.REG_SZ,
 }
-
-if not hasattr(_winreg, 'REG_QWORD'):
-    setattr(_winreg, 'REG_QWORD', 11)
 
 WELL_KNOWN_TYPES_NAMES = {
     _winreg.REG_DWORD: 'DWORD',
@@ -98,8 +94,6 @@ class Value(object):
 
         if type(value) == str and ktype in (_winreg.REG_SZ, _winreg.REG_MULTI_SZ):
             value = value.decode(sys.getfilesystemencoding())
-        elif type(value) == str and ktype == _winreg.REG_QWORD:
-            value, = struct.unpack('<q', value)
 
         self.parent = parent
         self.name = name

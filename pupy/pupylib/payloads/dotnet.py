@@ -70,16 +70,10 @@ class DotNetPayload(object):
         try:
             command = ['mcs']
 
-            if self.server:
-                config = self.server.config
-            else:
-                from pupylib import PupyConfig
-                config = PupyConfig()
-
-            sdk = config.get('gen', 'mcs_sdk', 4)
+            sdk = self.server.config.get('gen', 'mcs_sdk', 4)
             options = ' '.join([
                 options,
-                config.get('gen', 'mcs_options', '') or ''
+                self.server.config.get('gen', 'mcs_options', '') or ''
             ])
 
             if options:

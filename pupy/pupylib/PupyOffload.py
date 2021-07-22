@@ -11,7 +11,6 @@ import ssl
 import urlparse
 
 from network.lib import socks
-from dnslib import QTYPE
 
 try:
     from . import getLogger
@@ -59,8 +58,6 @@ class MsgPackMessages(object):
         self._conn.sendall(datalen_b + data)
 
 class PupyOffloadDNS(threading.Thread):
-    QTYPE = QTYPE.reverse
-
     def __init__(self, manager, handler, domain):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -110,10 +107,7 @@ class PupyOffloadDNS(threading.Thread):
 
             now = time.time()
 
-            qtype, qname = request.split(':', 1)
-            qtype = PupyOffloadDNS.QTYPE[qtype]
-
-            response = self.handler.process(qtype, qname)
+            response = self.handler.process(request)
             if not response:
                 response = []
 

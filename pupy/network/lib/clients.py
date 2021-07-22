@@ -40,8 +40,7 @@ class PupyTCPClient(PupyClient):
         self.keepalive=keepalive
 
     def connect(self, host, port):
-        family, socktype, proto, _, sockaddr = socket.getaddrinfo(
-            host, port, self.family, self.socktype)[0]
+        family, socktype, proto, _, sockaddr = socket.getaddrinfo(host, port, self.family, self.socktype)[0]
 
         s = socket.socket(family, socktype, proto)
         s.settimeout(self.timeout)

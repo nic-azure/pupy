@@ -38,7 +38,6 @@ type (
 
 	DNSRequest struct {
 		Name string
-		Type string
 		IPs  chan []string
 	}
 
